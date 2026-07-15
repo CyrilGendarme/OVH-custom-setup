@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="styles/style.css" />
+        <link rel="stylesheet" href="styles/style_marquee.css" />
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        />
+    </head>
+
+    <body>
+        <div id="social-full-screen" class="marquee"></div>
+
+        <script src="scripts/marquee.js"></script>
+
+        <script>
+            const socials_1 = [
+                { icon: "fa-brands fa-youtube", name: "DjGratuit" },
+                { icon: "fa-brands fa-mixcloud", name: "Dj Gratuit" },
+                { icon: "fa-brands fa-instagram", name: "djgratuit" },
+                { icon: "fa-solid fa-globe", name: "popuri.fm" },
+                { icon: "fa-brands fa-twitch", name: "DjGratuit" },
+            ];
+
+            const socials_2 = [
+                { icon: "fa-brands fa-youtube", name: "popuri-fm" },
+                { icon: "fa-brands fa-instagram", name: "popuri.fm" },
+                { icon: "fa-solid fa-globe", name: "popuri.fm" },
+                { icon: "fa-brands fa-tiktok", name: "popurifm" },
+            ];
+
+            const ROWS = 21;
+            const OFFSETS = [
+                0, 53, 100, -160, -72, 0, 53, 100, -160, -72, 0, 53, 100, -160,
+                -72, 0,
+            ];
+
+            buildMarquee(
+                "social-full-screen",
+                socials_1,
+                socials_2,
+                ROWS,
+                OFFSETS,
+            );
+        </script>
+    </body>
+</html>

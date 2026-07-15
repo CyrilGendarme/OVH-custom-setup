@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="styles/style.css" />
+        <link rel="stylesheet" href="styles/style_marquee.css" />
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        />
+    </head>
+
+    <body>
+
+<style>
+    #social-full-screen-1 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50vh;
+    }
+
+    #social-full-screen-2 {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 42vh;
+    }
+</style>
+
+<div id="social-full-screen-1" class="marquee"></div>
+<div id="social-full-screen-2" class="marquee"></div>
+
+        <script src="scripts/marquee.js"></script>
+
+        <script>
+            const socials_1_1 = [
+                { name: "DJ Sets" },
+                { name: "Music Selection" },
+                { name: "DJ Sets" },
+                { name: "Music Selection" },
+                { name: "DJ Sets" },
+                { name: "Music Selection" },
+                { name: "DJ Sets" },
+                { name: "Music Selection" },
+            ];
+
+            const socials_1_2 = [
+                { name: "love" },
+                { name: "unity" },
+                { name: "love" },
+                { name: "unity" },
+                { name: "love" },
+                { name: "unity" },
+                { name: "love" },
+                { name: "unity" },
+                { name: "love" },
+                { name: "unity" },
+                { name: "love" },
+                { name: "unity" },
+                { name: "love" },
+                { name: "unity" },
+            ];
+
+            const socials_2_1 = [
+                { icon: "fa-brands fa-youtube", name: "DjGratuit" },
+                { icon: "fa-brands fa-mixcloud", name: "Dj Gratuit" },
+                { icon: "fa-brands fa-instagram", name: "djgratuit" },
+                { icon: "fa-solid fa-globe", name: "popuri.fm" },
+                { icon: "fa-brands fa-twitch", name: "DjGratuit" },
+            ];
+
+            const socials_2_2 = [
+                { icon: "fa-brands fa-youtube", name: "popuri-fm" },
+                { icon: "fa-brands fa-instagram", name: "popuri.fm" },
+                { icon: "fa-solid fa-globe", name: "popuri.fm" },
+                { icon: "fa-brands fa-tiktok", name: "popurifm" },
+            ];
+
+            const ROWS1 = 10;
+            const ROWS2 = 11;
+            const OFFSETS = [
+                0, 53, 100, -160, -72, 0, 53, 100, -160, -72, 0, 53, 100, -160,
+                -72, 0,
+            ];
+
+            buildMarquee(
+                "social-full-screen-1",
+                socials_1_1,
+                socials_1_2,
+                13,
+                OFFSETS,
+            );
+
+            buildMarquee(
+                "social-full-screen-2",
+                socials_2_1,
+                socials_2_2,
+                ROWS2,
+                12,
+            );
+        </script>
+    </body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="styles/style.css" />
+    </head>
+
+    <body>
+        <div id="tracklist-container-wrapper">
+            <div id="tracklist-container">
+                <div id="tracklist-title">Last Tracks Played</div>
+
+                <div id="tracklist-content"></div>
+            </div>
+        </div>
+
+        <script type="module">
+            import { WebSocketService } from "./scripts/websocketClientService.js";
+            import { createTracklist } from "./scripts/tracklist.js";
+
+            const tracklist = createTracklist({
+                container: "tracklist-content",
+                maxItems: 8,
+            });
+
+            const socket = new WebSocketService({
+                port: 8766,
+
+                onMessage(event) {
+                    tracklist.handleMessage(event.data);
+                },
+            });
+
+            socket.connect();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+{
+    "obs": {
+        "host": "127.0.0.1",
+        "port": 4455,
+        "password": "aE5JQtDAWqDR2Jok",
+        "websocket_url": "ws://127.0.0.1:4455"
+    },
+
+    "overlay": {
+        "host": "127.0.0.1",
+        "port": 8765
+    },
+    "tracklist": {
+        "host": "127.0.0.1",
+        "port": 8766
+    }
+}

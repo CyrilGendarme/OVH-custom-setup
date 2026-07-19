@@ -1,6 +1,20 @@
-import asyncio
+from pathlib import Path
 import websockets
 import json
+
+BASE_DIR = Path(__file__).resolve().parent
+ROOT_DIR = BASE_DIR.parent
+
+
+def _load_config():
+    for candidate in (BASE_DIR / "config.json", ROOT_DIR / "config.json"):
+        if candidate.exists():
+            with open(candidate, encoding="utf-8") as f:
+                return json.load(f)
+    return {}
+
+
+config = _load_config()
 
 
 class BroadcastServer:
@@ -22,7 +36,8 @@ class BroadcastServer:
                 except Exception:
                     event = {"message": str(msg)}
 
-                await self.queue.put(event)
+                if self.queue is not None:
+                    await self.queue.put(event)
         finally:
             self.clients.discard(websocket)
             print(f"{self.label} disconnected")
@@ -48,9 +63,7 @@ class BroadcastServer:
 
     async def start(self):
         server = await websockets.serve(self.handler, self.host, self.port)
-        print(
-            f"{self.label} websocket listening on ws://{self.host}:{self.port}"
-        )
+        print(f"{self.label} websocket listening on ws://{self.host}:{self.port}")
         return server
 
 

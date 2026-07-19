@@ -8,22 +8,16 @@
     src: url("fonts/DMSans-VariableFont_opsz,wght.ttf") format("truetype");
 }
 
-html {
-    height: 100%;
-}
-
-#tracklist-body {
+html,
+body {
     margin: 0;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 277px;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
 }
 
 body {
-    margin: 0;
-    background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,100 +25,17 @@ body {
     height: 100vh;
 }
 
-#word,
-#tracklist-title,
+.title,
 .marquee {
     font-family: "Staatliches";
     color: white;
 }
 
-#word {
-    font-size: 80px;
-    letter-spacing: 12px;
-}
-
-#tracklist-container-wrapper,
-#social-bottom-left {
-    margin: 0;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 1480px;
-    height: 266px;
-    overflow: hidden;
-}
-
-#tracklist-container-wrapper__right{
-    margin: 0;
-    position: fixed;
-    right: 0;
-    width: 292px;
-    height: 680px;
-    overflow: hidden;
-}
-
-#social-bottom-left {
-    /* background-color: #111; */
-    height: 256px;
-}
-
-#tracklist-container {
-    margin: 6px 12px 20px 12px;
-}
-
-#tracklist-title {
-    font-size: 40px;
-    letter-spacing: 8px;
-}
-
-#tracklist-content {
-    margin-top: 6px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-flow: column;
-    grid-template-rows: repeat(4, auto); /* adjust number of rows */
-    row-gap: 8px;
-    column-gap: 20px;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-#tracklist-container-wrapper__right #tracklist-content{
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(6, auto);
-    grid-auto-flow: row;
-}
-
-.tracklist-item {
-    display: flex;
-    align-items: center;
-    font-family: "DMSans";
-    color: white;
-    height: 42px;
-    line-height: 1;
-    font-size: 20px;
-    letter-spacing: 2px;
-}
-
-#tracklist-container-wrapper__right .tracklist-item {
-    height: 60px;
-}
-
-.social {
-    font-size: 40px;
-    letter-spacing: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: white;
-    margin-left: 50px;
-}
-
-.marquee-right .social {
+.red-text {
     color: #c31530;
 }
 
-.social i {
-    /* fontrgb(22, 22, 22)px; */
-    margin-right: 10px;
+.title {
+    font-size: 40px;
+    letter-spacing: 8px;
 }

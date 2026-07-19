@@ -1,0 +1,27 @@
+#social-bottom-left {
+    margin: 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 1480px;
+    height: 256px;
+    overflow: hidden;
+}
+
+.social {
+    font-size: 40px;
+    letter-spacing: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    margin-left: 50px;
+}
+
+.marquee-right .social {
+    color: #c31530;
+}
+
+.social i {
+    margin-right: 10px;
+}

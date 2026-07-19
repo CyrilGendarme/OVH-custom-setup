@@ -1,0 +1,19 @@
+.word {
+    font-family: "Staatliches";
+    color: white;
+    font-size: 80px;
+    letter-spacing: 12px;
+    text-align: center;
+}
+
+.word-radio-wrapper {
+    margin: 0;
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(100% - 256px);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Countdown Overlay</title>
+        <link rel="stylesheet" href="styles/style.css" />
+        <link rel="stylesheet" href="styles/style_countdown.css" />
+    </head>
+
+    <body>
+        <div id="countdown-overlay">
+            <span>Live DJ Set</span>
+            <span>Starting Soon</span>
+            <span id="remaining-time">00:00:00</span>
+        </div>
+
+        <script>
+            // Set the DJ start time (24h format).
+            const TARGET_HOUR = 11;
+            const TARGET_MINUTE = 0;
+
+            const remainingTimeElement =
+                document.getElementById("remaining-time");
+
+            function getTargetDate() {
+                const now = new Date();
+                const target = new Date(now);
+
+                target.setHours(TARGET_HOUR, TARGET_MINUTE, 0, 0);
+
+                // If today's target time already passed, count down to tomorrow.
+                if (target <= now) {
+                    target.setDate(target.getDate() + 1);
+                }
+
+                return target;
+            }
+
+            let targetDate = getTargetDate();
+
+            function formatTime(value) {
+                return String(value).padStart(2, "0");
+            }
+
+            function renderCountdown() {
+                const now = new Date();
+                let remainingSeconds = Math.floor((targetDate - now) / 1000);
+
+                if (remainingSeconds <= 0) {
+                    targetDate = getTargetDate();
+                    remainingSeconds = Math.floor((targetDate - now) / 1000);
+                }
+
+                const hours = Math.floor(remainingSeconds / 3600);
+                const minutes = Math.floor((remainingSeconds % 3600) / 60);
+                const seconds = remainingSeconds % 60;
+
+                remainingTimeElement.textContent = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+            }
+
+            renderCountdown();
+            setInterval(renderCountdown, 1000);
+        </script>
+    </body>
+</html>

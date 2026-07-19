@@ -1,0 +1,27 @@
+:root {
+    --edge-offset: 24px;
+    --panel-bg: #111;
+    --text-color: #fff;
+}
+
+#countdown-overlay {
+    position: fixed;
+    left: var(--edge-offset);
+    bottom: var(--edge-offset);
+    background: var(--panel-bg);
+    color: var(--text-color);
+    font-family: "Staatliches", "Arial Narrow", Arial, sans-serif;
+    font-size: 44px;
+    letter-spacing: 1px;
+    line-height: 1;
+    padding: 14px 18px;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+#remaining-time {
+    color: #c31530;
+}

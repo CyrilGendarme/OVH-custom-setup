@@ -4,9 +4,8 @@ import threading
 
 
 class SSHReceiver:
-    def __init__(self, queue, config=None):
+    def __init__(self, queue):
         self.queue = queue
-        config = config or {}
         self.prompt =  "TEST> "
         self._task = None
         self._running = False

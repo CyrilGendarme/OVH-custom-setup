@@ -1,3 +1,6 @@
+import { sleep, randomDelay } from "./helpers.js";
+import { typeText, eraseText } from "./textAnimation.js";
+
 export function createTracklist({ container, maxItems = 8 }) {
     if (typeof container === "string") {
         container = document.getElementById(container);
@@ -11,16 +14,6 @@ export function createTracklist({ container, maxItems = 8 }) {
     const baseSpeed = 80;
     const randomness = 0.2;
     let animationQueue = Promise.resolve();
-
-    function sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
-    function randomDelay(base = baseSpeed) {
-        const variation = base * randomness;
-
-        return base + (Math.random() * variation * 2 - variation);
-    }
 
     function createTrackElement(text = "") {
         const div = document.createElement("div");
@@ -36,77 +29,16 @@ export function createTracklist({ container, maxItems = 8 }) {
         };
     }
 
-    function typeText(item) {
-        return new Promise((resolve) => {
-            const text = item.text;
-            let index = 0;
-            let cursorVisible = true;
-            const cursorTimer = setInterval(() => {
-                cursorVisible = !cursorVisible;
-
-                item.span.textContent =
-                    text.slice(0, index) + (cursorVisible ? "|" : "");
-            }, 500);
-            item.span.textContent = "|";
-
-            function nextLetter() {
-                if (index < text.length) {
-                    index++;
-                    item.span.textContent =
-                        text.slice(0, index) + (cursorVisible ? "|" : "");
-                    setTimeout(nextLetter, randomDelay());
-                } else {
-                    clearInterval(cursorTimer);
-                    item.span.textContent = text;
-                    resolve();
-                }
-            }
-
-            setTimeout(nextLetter, randomDelay(2000));
-        });
-    }
-
-    function eraseText(item) {
-        return new Promise((resolve) => {
-            const text = item.text;
-            let index = text.length;
-            let cursorVisible = true;
-            const cursorTimer = setInterval(() => {
-                cursorVisible = !cursorVisible;
-                item.span.textContent =
-                    text.slice(0, index) + (cursorVisible ? "|" : "");
-            }, 500);
-
-            item.span.textContent = text + "|";
-            setTimeout(() => {
-                function backspace() {
-                    if (index > 0) {
-                        index--;
-                        item.span.textContent =
-                            text.slice(0, index) + (cursorVisible ? "|" : "");
-                        setTimeout(backspace, randomDelay());
-                    } else {
-                        clearInterval(cursorTimer);
-                        item.div.remove();
-                        resolve();
-                    }
-                }
-
-                backspace();
-            }, randomDelay(2000));
-        });
-    }
-
     async function addTrack(text) {
         if (trackItems.length >= maxItems) {
             const oldest = trackItems.pop();
             await eraseText(oldest);
-            await sleep(randomDelay(1600));
+            await sleep(randomDelay(baseSpeed));
         }
 
         const item = createTrackElement(text);
         trackItems.unshift(item);
-        await typeText(item);
+        await typeText(item, text);
     }
 
     function queueTrack(text) {

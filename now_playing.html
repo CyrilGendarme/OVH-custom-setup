@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="styles/style.css" />
+        <link rel="stylesheet" href="styles/style_now_playing.css" />
+    </head>
+
+    <body>
+        <div id="now-playing-container-wrapper">
+            <div class="menu-container">
+                <div class="title">Today's menu</div>
+
+                <div class="now-playing-info-text">a text or</div>
+                <div class="now-playing-info-text">something</div>
+            </div>
+            <div class="menu-container">
+                <div class="title">
+                    Like <span class="red-text">Share </span>Follow
+                    <span class="red-text">Love</span>
+                </div>
+            </div>
+            <div class="info-container">
+                <div class="title">Now Playing</div>
+                <div class="content">
+                    <div class="now-playing-info-item">
+                        <div class="now-playing-info-title">Artist:</div>
+                        <div class="now-playing-info-text"></div>
+                    </div>
+                    <div class="now-playing-info-item">
+                        <div class="now-playing-info-title">Title:</div>
+                        <div class="now-playing-info-text"></div>
+                    </div>
+                    <div class="now-playing-info-item">
+                        <div class="now-playing-info-title">Album:</div>
+                        <div class="now-playing-info-text"></div>
+                    </div>
+                    <div class="now-playing-info-item">
+                        <div class="now-playing-info-title">Label:</div>
+                        <div class="now-playing-info-text"></div>
+                    </div>
+                    <div class="now-playing-info-item">
+                        <div class="now-playing-info-title">Year:</div>
+                        <div class="now-playing-info-text"></div>
+                    </div>
+                    <div class="now-playing-info-item">
+                        <div class="now-playing-info-title">BPM:</div>
+                        <div class="now-playing-info-text"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="cover-container">
+                <img
+                    src="./musicbee_radio/now_played_track_info/CoverArtwork.jpg"
+                    alt="Album/track cover"
+                    onerror="
+                        this.onerror = null;
+                        this.src = './assets/icon_2_popuri.jpg';
+                    "
+                />
+            </div>
+        </div>
+
+        <script type="module">
+            import { WebSocketService } from "./scripts/websocketClientService.js";
+            import {
+                typeText,
+                eraseText,
+                HIDDEN_CURSOR,
+            } from "./scripts/textAnimation.js";
+            import {
+                parseIncomingPayload,
+                firstMeaningful,
+                isMeaningfulValue,
+            } from "./scripts/helpers.js";
+
+            const fieldOrder = [
+                "artist",
+                "title",
+                "album",
+                "label",
+                "year",
+                "bpm",
+            ];
+            const coverFadeOutMs = 220;
+            const coverFadeInMs = 350;
+            let animationQueue = Promise.resolve();
+            let coverTransitionQueue = Promise.resolve();
+
+            function wait(ms) {
+                return new Promise((resolve) => setTimeout(resolve, ms));
+            }
+
+            function normalizeNowPlayingData(payload) {
+                return {
+                    artist: firstMeaningful(payload, ["artist", "artist_name"]),
+                    title: firstMeaningful(payload, [
+                        "title",
+                        "track",
+                        "track_name",
+                        "song",
+                    ]),
+                    album: firstMeaningful(payload, ["album", "album_name"]),
+                    label: firstMeaningful(payload, ["label"]),
+                    year: (() => {
+                        const year = firstMeaningful(payload, ["year"]);
+                        return year === "0" ? "" : year;
+                    })(),
+                    bpm: firstMeaningful(payload, [
+                        "bpm",
+                        "averagebpm",
+                        "average_bpm",
+                    ]),
+                };
+            }
+
+            function refreshAlbumCover() {
+                coverTransitionQueue = coverTransitionQueue
+                    .then(async () => {
+                        const coverContainer =
+                            document.querySelector(".cover-container");
+                        const coverImage = coverContainer?.querySelector("img");
+
+                        if (!coverImage || !coverContainer) {
+                            return;
+                        }
+
+                        const coverPath =
+                            "./musicbee_radio/now_played_track_info/CoverArtwork.jpg";
+                        const fallbackPath = "./assets/icon_2_popuri.jpg";
+
+                        coverContainer.style.backgroundColor = "#111";
+
+                        coverImage.style.transition = `opacity ${coverFadeOutMs}ms ease`;
+                        coverImage.style.opacity = "0";
+                        await wait(coverFadeOutMs);
+
+                        await new Promise((resolve) => {
+                            coverImage.onload = () => {
+                                coverImage.onload = null;
+                                coverImage.onerror = null;
+                                resolve();
+                            };
+
+                            coverImage.onerror = () => {
+                                coverImage.onerror = null;
+                                coverImage.onload = null;
+                                coverImage.src = fallbackPath;
+                                resolve();
+                            };
+
+                            coverImage.src = `${coverPath}?t=${Date.now()}`;
+                        });
+
+                        coverImage.style.transition = `opacity ${coverFadeInMs}ms ease`;
+                        coverImage.style.opacity = "1";
+                        await wait(coverFadeInMs);
+                    })
+                    .catch((error) => {
+                        console.error("Cover transition failed", error);
+                    });
+            }
+
+            function updateNowPlayingInfo(data) {
+                const nowPlayingContainer = document.getElementById(
+                    "now-playing-container-wrapper",
+                );
+
+                if (!nowPlayingContainer) {
+                    return;
+                }
+
+                const normalized = normalizeNowPlayingData(data);
+
+                const infoItems = nowPlayingContainer.querySelectorAll(
+                    ".now-playing-info-item",
+                );
+
+                const fieldElements = new Map();
+
+                infoItems.forEach((item) => {
+                    const titleElement = item.querySelector(
+                        ".now-playing-info-title",
+                    );
+                    const textElement = item.querySelector(
+                        ".now-playing-info-text",
+                    );
+
+                    if (titleElement && textElement) {
+                        const key = titleElement.textContent
+                            .replace(":", "")
+                            .toLowerCase();
+                        fieldElements.set(key, textElement);
+                    }
+                });
+
+                const targetValues = {};
+                let hasDisplayedChange = false;
+
+                fieldOrder.forEach((key) => {
+                    const element = fieldElements.get(key);
+                    if (!element) {
+                        return;
+                    }
+
+                    const currentValue = element.textContent.trim();
+                    const nextValue = isMeaningfulValue(normalized[key])
+                        ? normalized[key]
+                        : HIDDEN_CURSOR;
+
+                    targetValues[key] = nextValue;
+
+                    if (nextValue !== currentValue) {
+                        hasDisplayedChange = true;
+                    }
+                });
+
+                if (!hasDisplayedChange) {
+                    return;
+                }
+
+                animationQueue = animationQueue
+                    .then(async () => {
+                        for (const key of [...fieldOrder].reverse()) {
+                            const element = fieldElements.get(key);
+                            if (!element) {
+                                continue;
+                            }
+
+                            await eraseText(element, 80, 1000, true);
+                            // element.textContent = "";
+                        }
+
+                        for (const key of fieldOrder) {
+                            const element = fieldElements.get(key);
+                            if (!element) {
+                                continue;
+                            }
+
+                            await typeText(
+                                element,
+                                targetValues[key] || "",
+                                80,
+                                1800,
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Animation queue failed", error);
+                    });
+            }
+
+            const socket = new WebSocketService({
+                port: 8767,
+
+                onMessage(event) {
+                    const payload = parseIncomingPayload(event.data);
+                    refreshAlbumCover();
+                    updateNowPlayingInfo(payload);
+                },
+            });
+
+            socket.connect();
+        </script>
+    </body>
+</html>

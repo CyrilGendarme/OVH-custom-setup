@@ -59,8 +59,6 @@ class BroadcastServer:
         for client in disconnected:
             self.clients.discard(client)
 
-        print(f"Sent event to {len(self.clients)} websocket(s): {event}")
-
     async def start(self):
         server = await websockets.serve(self.handler, self.host, self.port)
         print(f"{self.label} websocket listening on ws://{self.host}:{self.port}")

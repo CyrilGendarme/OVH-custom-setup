@@ -11,12 +11,11 @@ if str(ROOT_DIR) not in sys.path:
 from obs_helpers.obs import OBSController
 from websocket_helpers.websocket_server import BroadcastServer
 
-MUSICBEE_NOWPLAYING = (
-    Path(__file__).resolve().parent / "now_played_track_info" / "Tags.txt"
-)
+MUSICBEE_TAGS = Path(__file__).resolve().parent / "now_played_track_info" / "Tags.txt"
+
 WS_HOST = "127.0.0.1"
 TYPEWRITER_PORT = 8765
-NOW_PLAYING_PORT = 8767
+NOW_PLAYING_PORT = 8766
 
 
 def _safe_get(items, index):
@@ -52,8 +51,8 @@ async def main():
 
     while True:
         try:
-            if MUSICBEE_NOWPLAYING.exists():
-                track = MUSICBEE_NOWPLAYING.read_text(encoding="utf-8-sig").strip()
+            if MUSICBEE_TAGS.exists():
+                track = MUSICBEE_TAGS.read_text(encoding="utf-8-sig").strip()
 
                 if track and track != last_track:
                     print("\nNEW TRACK")
@@ -93,12 +92,12 @@ async def main():
                         if event["artist"] and event["title"]
                         else event["title"] or event["artist"]
                     )
+                            
+                    print(f"obs.get_scene_name() = {obs.get_scene_name() if obs is not None else 'None'}")
 
                     if obs is not None and obs.get_scene_name() == "MAIN_RADIO":
-                        
-                        print("------------ Activating Typewriter Radio macro ---------")
-                        
                         await typewriter_ws.send(event)
+                        obs.switch_radio_background()
                         obs.activate_macro("Typerwriter Radio")
                         await asyncio.sleep(
                             11

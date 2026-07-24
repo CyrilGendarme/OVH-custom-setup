@@ -1,38 +1,363 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles/style.css" />
-        <link rel="stylesheet" href="styles/style_tracklist.css" />
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles/style_radio_background.css" />
+</head>
 
-    <body>
-        <div id="now-playing-container-wrapper__right">
-            <div id="tracklist-container">
-                <div class="title">Last Tracks Played</div>
+<body>
 
-                <div id="tracklist-content"></div>
-            </div>
-        </div>
+<video
+    id="videoA"
+    class="bg-video active"
+    autoplay
+    muted
+    playsinline>
+</video>
 
-        <script type="module">
-            import { WebSocketService } from "./scripts/websocketClientService.js";
-            import { createTracklist } from "./scripts/tracklist.js";
+<video
+    id="videoB"
+    class="bg-video"
+    autoplay
+    muted
+    playsinline>
+</video>
 
-            const tracklist = createTracklist({
-                container: "tracklist-content",
-                maxItems: 8,
-            });
 
-            const socket = new WebSocketService({
-                port: 8766,
+<script type="module">
 
-                onMessage(event) {
-                    tracklist.handleMessage(event.data);
-                },
-            });
+import { WebSocketService } from "./scripts/websocketClientService.js";
 
-            socket.connect();
-        </script>
-    </body>
+
+// --------------------------------
+// Video setup
+// --------------------------------
+
+const videos = [
+    "./assets/stream loop 1.mp4",
+    "./assets/stream loop 2.mp4",
+    "./assets/stream loop 3.mp4",
+];
+
+
+const playerA = document.getElementById("videoA");
+const playerB = document.getElementById("videoB");
+
+
+let activePlayer = playerA;
+let inactivePlayer = playerB;
+
+
+let currentVideoIndex = -1;
+let switching = false;
+
+
+
+function getNextVideo() {
+
+    currentVideoIndex =
+        (currentVideoIndex + 1) % videos.length;
+
+    return videos[currentVideoIndex];
+
+}
+
+
+
+// --------------------------------
+// Infinite loop handler
+// --------------------------------
+
+function setupInfiniteLoop(video) {
+
+    video.addEventListener(
+        "ended",
+        async () => {
+
+            console.log("Restarting:", video.src);
+
+            try {
+
+                video.currentTime = 0;
+
+                await video.play();
+
+            }
+            catch(error) {
+
+                console.log(
+                    "Loop restart failed:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+
+setupInfiniteLoop(playerA);
+setupInfiniteLoop(playerB);
+
+
+
+// --------------------------------
+// Safe video loading
+// --------------------------------
+
+function loadVideo(video, src) {
+
+    return new Promise((resolve, reject) => {
+
+
+        video.pause();
+
+
+        video.removeAttribute("src");
+
+        video.load();
+
+
+
+        video.src =
+            src + "?t=" + Date.now();
+
+
+
+        video.muted = true;
+        video.autoplay = true;
+        video.playsInline = true;
+
+
+
+        video.onerror = () => {
+
+            reject(
+                new Error(
+                    "Cannot decode: " + src
+                )
+            );
+
+        };
+
+
+
+        video.onloadeddata = async () => {
+
+            try {
+
+                video.currentTime = 0;
+
+
+                await video.play();
+
+
+                resolve();
+
+
+            }
+            catch(error) {
+
+
+                reject(error);
+
+
+            }
+
+        };
+
+
+    });
+
+}
+
+
+
+// --------------------------------
+// Switching
+// --------------------------------
+
+async function switchBackgroundVideo() {
+
+
+    if (switching) {
+        return;
+    }
+
+
+    switching = true;
+
+
+
+    try {
+
+
+        const next =
+            getNextVideo();
+
+
+
+        await loadVideo(
+            inactivePlayer,
+            next
+        );
+
+
+
+        inactivePlayer.classList.add(
+            "active"
+        );
+
+
+
+        activePlayer.classList.remove(
+            "active"
+        );
+
+
+
+        const oldPlayer =
+            activePlayer;
+
+
+
+        activePlayer =
+            inactivePlayer;
+
+
+
+        inactivePlayer =
+            oldPlayer;
+
+
+
+        setTimeout(() => {
+
+            oldPlayer.pause();
+
+            oldPlayer.currentTime = 0;
+
+        }, 1200);
+
+
+
+    }
+    catch(error) {
+
+
+        console.error(
+            "Video switch error:",
+            error
+        );
+
+
+    }
+    finally {
+
+
+        switching = false;
+
+
+    }
+
+}
+
+
+
+// --------------------------------
+// Startup
+// --------------------------------
+
+async function init() {
+
+
+    try {
+
+
+        const first =
+            getNextVideo();
+
+
+
+        await loadVideo(
+            activePlayer,
+            first
+        );
+
+
+    }
+    catch(error) {
+
+
+        console.error(
+            "Initial video error:",
+            error
+        );
+
+
+    }
+
+}
+
+
+
+window.addEventListener(
+    "load",
+    async () => {
+
+
+        await init();
+
+
+
+        try {
+
+            await activePlayer.play();
+
+        }
+        catch(error) {
+
+            console.error(
+                "Autoplay error:",
+                error
+            );
+
+        }
+
+
+    }
+);
+
+
+
+// --------------------------------
+// WebSocket
+// --------------------------------
+
+const socket =
+    new WebSocketService({
+
+        port: 8767,
+
+
+        onMessage(event) {
+
+            switchBackgroundVideo();
+
+        }
+
+    });
+
+
+
+socket.connect();
+
+
+
+</script>
+
+</body>
 </html>

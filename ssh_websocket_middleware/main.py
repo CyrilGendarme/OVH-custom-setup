@@ -1,19 +1,23 @@
 import asyncio
+import socket
 
-from websocket_helpers.custom_queue import EventQueue
-from websocket_helpers.websocket_server import TypewriterServer, TracklistServer
-from ssh_receiver import SSHReceiver
+from ssh_websocket_middleware.custom_queue import EventQueue
+from ssh_websocket_middleware.websocket_server import TypewriterServer, TracklistServer
 from obs_helpers.obs import OBSController
+from queued_udp_receiver import QueuedUdpReceiver
 
+port = 55555
+
+
+    
 async def main():
     queue = EventQueue()
+    udp_receiver = QueuedUdpReceiver(queue, port=port)
     typewriter = TypewriterServer(queue)
     tracklist = TracklistServer(queue)
+    await udp_receiver.start()
     await typewriter.start()
     await tracklist.start()
-
-    ssh = SSHReceiver(queue)
-    await ssh.start()
 
     obs = OBSController()
 

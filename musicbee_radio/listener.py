@@ -9,7 +9,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from obs_helpers.obs import OBSController
-from websocket_helpers.websocket_server import BroadcastServer
+from ssh_websocket_middleware.websocket_server import BroadcastServer
 
 MUSICBEE_TAGS = Path(__file__).resolve().parent / "now_played_track_info" / "Tags.txt"
 

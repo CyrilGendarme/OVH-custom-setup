@@ -1,4 +1,4 @@
-import { sleep, randomDelay } from "./helpers.js";
+import { sleep, randomDelay, normalizeIncomingTrackEvent } from "./helpers.js";
 import { typeText, eraseText } from "./textAnimation.js";
 
 export function createTracklist({ container, maxItems = 8 }) {
@@ -32,13 +32,14 @@ export function createTracklist({ container, maxItems = 8 }) {
     async function addTrack(text) {
         if (trackItems.length >= maxItems) {
             const oldest = trackItems.pop();
-            await eraseText(oldest);
+            await eraseText(oldest.span);
+            oldest.div.remove();
             await sleep(randomDelay(baseSpeed));
         }
 
         const item = createTrackElement(text);
         trackItems.unshift(item);
-        await typeText(item, text);
+        await typeText(item.span, text);
     }
 
     function queueTrack(text) {
@@ -78,13 +79,12 @@ export function createTracklist({ container, maxItems = 8 }) {
     }
 
     function handleMessage(data) {
-        if (typeof data === "string") {
-            try {
-                data = JSON.parse(data);
-            } catch {}
+        const normalizedData = normalizeIncomingTrackEvent(data);
+        if (!normalizedData) {
+            return;
         }
 
-        const text = getDisplayText(data);
+        const text = getDisplayText(normalizedData);
 
         if (text) {
             queueTrack(text);

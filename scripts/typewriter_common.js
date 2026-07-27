@@ -1,4 +1,5 @@
 import { WebSocketService } from "./websocketClientService.js";
+import { normalizeIncomingTrackEvent } from "./helpers.js";
 
 export function initWordDisplay(selector) {
     let finalWord = "";
@@ -113,8 +114,7 @@ export function initWordDisplay(selector) {
         const artist =
             typeof data.artist === "string" ? data.artist.trim() : "";
 
-        const title =
-            typeof data.title === "string" ? data.title.trim() : "";
+        const title = typeof data.title === "string" ? data.title.trim() : "";
 
         if (artist && title) {
             return `${artist} - ${title}`;
@@ -124,14 +124,9 @@ export function initWordDisplay(selector) {
     }
 
     function handleIncomingMessage(event) {
-        let data = event.data;
-
-        if (typeof event.data === "string") {
-            try {
-                data = JSON.parse(event.data);
-            } catch {
-                data = event.data;
-            }
+        const data = normalizeIncomingTrackEvent(event.data);
+        if (!data) {
+            return;
         }
 
         const text = getDisplayText(data);
@@ -144,7 +139,7 @@ export function initWordDisplay(selector) {
     window.obsTrigger = resetAnimation;
 
     const socket = new WebSocketService({
-        port: 8765,
+        port: 8770,
         onMessage: handleIncomingMessage,
     });
 

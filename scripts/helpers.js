@@ -38,6 +38,51 @@ export function parseIncomingPayload(rawData) {
     return {};
 }
 
+export function normalizeIncomingTrackEvent(rawData) {
+    const parsed = parseIncomingPayload(rawData);
+
+    if (!parsed || typeof parsed !== "object") {
+        return null;
+    }
+
+    const nestedPayload =
+        parsed.payload && typeof parsed.payload === "object"
+            ? parsed.payload
+            : parsed.data && typeof parsed.data === "object"
+              ? parsed.data
+              : parsed.event && typeof parsed.event === "object"
+                ? parsed.event
+                : parsed;
+
+    const type =
+        firstMeaningful(nestedPayload, ["type", "event_type"]) ||
+        "track_update";
+    if (type && type !== "track_update") {
+        return null;
+    }
+
+    const artist = firstMeaningful(nestedPayload, ["artist", "artist_name"]);
+    const title = firstMeaningful(nestedPayload, [
+        "title",
+        "track",
+        "track_name",
+        "song",
+    ]);
+    const message =
+        firstMeaningful(nestedPayload, ["message", "text"]) ||
+        (artist && title ? `${artist} - ${title}` : title || artist);
+
+    return {
+        ...nestedPayload,
+        type,
+        artist,
+        title,
+        message,
+        track_id: firstMeaningful(nestedPayload, ["track_id", "id"]),
+        rank: firstMeaningful(nestedPayload, ["rank", "position"]),
+    };
+}
+
 export function firstMeaningful(payload, keys) {
     for (const key of keys) {
         if (isMeaningfulValue(payload[key])) {

@@ -2,7 +2,7 @@ import asyncio
 import socket
 import json
 
-from websocket_helpers.custom_queue import EventQueue
+from ssh_websocket_middleware.custom_queue import EventQueue
 
 
 class QueuedUdpReceiver:

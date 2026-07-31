@@ -13,5 +13,10 @@
     "tracklist": {
         "host": "127.0.0.1",
         "port": 8766
+    },
+    "random_events": {
+        "item_name": "CTA popuri",
+        "time_1": 60,
+        "time_2": 120
     }
 }

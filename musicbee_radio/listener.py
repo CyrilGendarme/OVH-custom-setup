@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from pathlib import Path
 import sys
 
@@ -12,6 +13,11 @@ from obs_helpers.obs import OBSController
 from ssh_websocket_middleware.websocket_server import BroadcastServer
 
 MUSICBEE_TAGS = Path(__file__).resolve().parent / "now_played_track_info" / "Tags.txt"
+TRACK_DURATION_DATA = (
+    Path(__file__).resolve().parent
+    / "now_played_track_info"
+    / "track_duration_data.txt"
+)
 
 WS_HOST = "127.0.0.1"
 TYPEWRITER_PORT = 8770
@@ -26,11 +32,21 @@ def _safe_get(items, index):
 
 def parse_track_text(track):
     items = [line.strip() for line in track.replace("\\n", "\n").split("\n")]
+
+    for item in items:
+        print(f"Item: {item}")
+
     artist = _safe_get(items, 0)
     album = _safe_get(items, 1)
     title = _safe_get(items, 2)
     year = _safe_get(items, 3)
-    return artist, album, title, year
+    duration = _safe_get(items, 4)
+    time_received = datetime.now().strftime("%H:%M:%S")
+    return artist, album, title, year, duration, time_received
+
+
+def save_track_duration_data(time_received, duration):
+    TRACK_DURATION_DATA.write_text(f"{time_received}\n{duration}", encoding="utf-8")
 
 
 async def main():
@@ -59,7 +75,16 @@ async def main():
                     print(track)
                     last_track = track
 
-                    artist_name, album_name, track_name, year = parse_track_text(track)
+                    (
+                        artist_name,
+                        album_name,
+                        track_name,
+                        year,
+                        duration,
+                        time_received,
+                    ) = parse_track_text(track)
+
+                    save_track_duration_data(time_received, duration)
 
                     event = {
                         "artist": artist_name,
@@ -67,6 +92,7 @@ async def main():
                         "track": track_name,
                         "album": album_name,
                         "year": year,
+                        "duration": duration,
                     }
 
                     data = dao.get_track_data(title=track_name, artist=artist_name)
@@ -92,8 +118,10 @@ async def main():
                         if event["artist"] and event["title"]
                         else event["title"] or event["artist"]
                     )
-                            
-                    print(f"obs.get_scene_name() = {obs.get_scene_name() if obs is not None else 'None'}")
+
+                    print(
+                        f"obs.get_scene_name() = {obs.get_scene_name() if obs is not None else 'None'}"
+                    )
 
                     if obs is not None and obs.get_scene_name() == "MAIN_RADIO":
                         await typewriter_ws.send(event)

@@ -1,5 +1,6 @@
 import json
 import re
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -92,28 +93,32 @@ class OBSController:
             print(f"OBS macro failed: {exc}")
 
     def set_source_visibility(self, source_name, visible):
-
         try:
-
             scene = self.get_scene_name()
-
             response = self.client.get_scene_item_list(scene)
-
             for item in response.scene_items:
-
                 if item["sourceName"] == source_name:
-
                     self.client.set_scene_item_enabled(
                         scene_name=scene,
                         item_id=item["sceneItemId"],
                         enabled=visible,
                     )
-
                     return
 
         except Exception as exc:
 
             print(f"OBS visibility error {source_name}: {exc}")
+
+    def pulse_current_scene_item(self, source_name, scene_name="MAIN_RADIO"):
+        current_scene = self.get_scene_name()
+        if current_scene != scene_name:
+            return False
+
+        self.set_source_visibility(source_name, False)
+        time.sleep(0.1)
+        self.set_source_visibility(source_name, True)
+        print(f"Pulsed {source_name} in {current_scene}")
+        return True
 
     def switch_radio_background(self):
         new_source = self.get_desired_radio_source(rotate_regular_source=True)

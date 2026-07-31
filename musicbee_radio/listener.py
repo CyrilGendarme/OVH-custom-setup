@@ -105,6 +105,9 @@ async def main():
 
                     await now_playing_ws.send(event)
 
+            if obs is not None and obs.get_scene_name() == "MAIN_RADIO":
+                obs.sync_radio_background()
+
         except Exception as exc:
             print(exc)
 

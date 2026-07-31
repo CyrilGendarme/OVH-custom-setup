@@ -15,10 +15,12 @@
             <span id="remaining-time">00:00:00</span>
         </div>
 
-        <script>
-            // Set the DJ set start time (24h format).
-            const TARGET_HOUR = null;
-            const TARGET_MINUTE = null;
+        <script type="module">
+            import {
+                TARGET_HOUR,
+                TARGET_MINUTE,
+                getTargetDate,
+            } from "./scripts/startingSoonSchedule.js";
 
             const countdownOverlayElement =
                 document.getElementById("countdown-overlay");
@@ -26,20 +28,6 @@
                 document.getElementById("remaining-time");
             const shouldShowCountdown =
                 TARGET_HOUR != null && TARGET_MINUTE != null;
-
-            function getTargetDate() {
-                const now = new Date();
-                const target = new Date(now);
-
-                target.setHours(TARGET_HOUR, TARGET_MINUTE, 0, 0);
-
-                // If today's target time already passed, count down to tomorrow.
-                if (target <= now) {
-                    target.setDate(target.getDate() + 1);
-                }
-
-                return target;
-            }
 
             function formatTime(value) {
                 return String(value).padStart(2, "0");

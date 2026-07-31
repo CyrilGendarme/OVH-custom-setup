@@ -217,4 +217,4 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-musicbee_radio/
+musicbee_radio/now_played_track_info/

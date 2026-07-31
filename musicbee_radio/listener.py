@@ -14,7 +14,7 @@ from ssh_websocket_middleware.websocket_server import BroadcastServer
 MUSICBEE_TAGS = Path(__file__).resolve().parent / "now_played_track_info" / "Tags.txt"
 
 WS_HOST = "127.0.0.1"
-TYPEWRITER_PORT = 8765
+TYPEWRITER_PORT = 8770
 NOW_PLAYING_PORT = 8766
 
 

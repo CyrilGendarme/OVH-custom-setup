@@ -8,7 +8,7 @@
 
     "overlay": {
         "host": "127.0.0.1",
-        "port": 8765
+        "port": 8770
     },
     "tracklist": {
         "host": "127.0.0.1",

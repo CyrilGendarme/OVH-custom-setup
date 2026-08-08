@@ -37,7 +37,8 @@ async def main():
             event = await queue.get()
             if obs.get_scene_name() == "MAIN_DJ_SET":
                 await typewriter.send(event)
-                obs.activate_macro("Typerwriter")
+                # obs.activate_macro("Typerwriter")
+                obs.activate_macro("Typerwriter Radio")
                 await asyncio.sleep(11)  # delay to ensure effect is fully achieved
 
             await tracklist.send(event)

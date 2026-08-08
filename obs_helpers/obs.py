@@ -106,7 +106,6 @@ class OBSController:
                     return
 
         except Exception as exc:
-
             print(f"OBS visibility error {source_name}: {exc}")
 
     def pulse_current_scene_item(self, source_name, scene_name="MAIN_RADIO"):
@@ -115,7 +114,7 @@ class OBSController:
             return False
 
         self.set_source_visibility(source_name, False)
-        time.sleep(0.1)
+        time.sleep(1)
         self.set_source_visibility(source_name, True)
         print(f"Pulsed {source_name} in {current_scene}")
         return True

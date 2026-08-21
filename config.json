@@ -10,9 +10,13 @@
         "host": "127.0.0.1",
         "port": 8770
     },
-    "tracklist": {
+    "last_tracks": {
         "host": "127.0.0.1",
         "port": 8766
+    },
+    "now_playing_radio": {
+        "host": "127.0.0.1",
+        "port": 8765
     },
     "random_events": {
         "item_name": "CTA popuri",

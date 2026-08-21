@@ -8,7 +8,7 @@
 
     <body>
         <div id="now-playing-container-wrapper">
-            <div class="menu-container">
+            <div class="menu-container today-menu">
                 <div class="title">Today's menu</div>
 
                 <div class="now-playing-info-text">45 to 33 rpm</div>
@@ -251,7 +251,7 @@
             }
 
             const socket = new WebSocketService({
-                port: 8766,
+                port: 8765,
 
                 onMessage(event) {
                     const payload = parseIncomingPayload(event.data);

@@ -76,12 +76,22 @@ class TypewriterServer(BroadcastServer):
         )
 
 
-class TracklistServer(BroadcastServer):
+class LastTracksServer(BroadcastServer):
     def __init__(self, queue, config):
-        section = config["tracklist"]
+        section = config["last_tracks"]
         super().__init__(
             queue=queue,
             host=section["host"],
             port=section["port"],
-            label="Tracklist",
+            label="Last Tracks",
+        )
+
+class NowPlayingServer(BroadcastServer):
+    def __init__(self, queue, config):
+        section = config["now_playing_radio"]
+        super().__init__(
+            queue=queue,
+            host=section["host"],
+            port=section["port"],
+            label="Now Playing",
         )

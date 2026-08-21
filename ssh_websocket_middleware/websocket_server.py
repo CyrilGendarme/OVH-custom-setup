@@ -1,20 +1,9 @@
-from pathlib import Path
 import websockets
 import json
 
-BASE_DIR = Path(__file__).resolve().parent
-ROOT_DIR = BASE_DIR.parent
+from config import CONFIG
 
-
-def _load_config():
-    for candidate in (BASE_DIR / "config.json", ROOT_DIR / "config.json"):
-        if candidate.exists():
-            with open(candidate, encoding="utf-8") as f:
-                return json.load(f)
-    return {}
-
-
-config = _load_config()
+config = CONFIG
 
 
 class BroadcastServer:

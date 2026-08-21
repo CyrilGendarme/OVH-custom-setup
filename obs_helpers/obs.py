@@ -1,4 +1,3 @@
-import json
 import re
 import time
 from datetime import datetime, timedelta
@@ -6,19 +5,7 @@ from pathlib import Path
 
 import obsws_python as obs
 
-BASE_DIR = Path(__file__).resolve().parent
-ROOT_DIR = BASE_DIR.parent
-
-
-def _load_config():
-    for candidate in (BASE_DIR / "config.json", ROOT_DIR / "config.json"):
-        if candidate.exists():
-            with open(candidate, encoding="utf-8") as f:
-                return json.load(f)
-    return {}
-
-
-CONFIG = _load_config()
+from config import CONFIG, ROOT_DIR
 SCHEDULE_FILE = ROOT_DIR / "scripts" / "startingSoonSchedule.js"
 
 
@@ -46,20 +33,16 @@ class OBSController:
     def __init__(self):
         obs_config = CONFIG.get("obs", {})
 
-        self.host = obs_config.get("host", "127.0.0.1")
-        self.port = obs_config.get("port", 4455)
+        self.host = obs_config["host"]
+        self.port = obs_config["port"]
         self.password = obs_config.get("password", "")
 
         self.client = obs.ReqClient(
             host=self.host, port=self.port, password=self.password
         )
 
-        self.radio_video_sources = [
-            "vid 1",
-            "vid 2",
-            "vid 3",
-        ]
-        self.starting_soon_radio_source = "vid 3"
+        self.radio_video_sources = obs_config["radio_video_sources"]
+        self.starting_soon_radio_source = obs_config["starting_soon_radio_source"]
         self.regular_radio_video_sources = [
             source
             for source in self.radio_video_sources

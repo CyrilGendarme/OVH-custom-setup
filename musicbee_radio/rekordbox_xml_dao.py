@@ -1,19 +1,21 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 import xml.etree.ElementTree as ET
+from typing import Any
+
+from config import CONFIG, resolve_path
 
 
-REKORDBOX_COLLECTION_TRACKS_XML_FILE_PATH: str = (
-    r"C:/Users/User/Professional DJ team Dropbox/Cyril Gendarme/rekordbox/xml/rekordbox.xml"
+REKORDBOX_COLLECTION_TRACKS_XML_FILE_PATH = resolve_path(
+    CONFIG["paths"]["rekordbox_xml"]
 )
 
 
 class RekordboxDAO:
     """Simple XML DAO to retrieve Rekordbox track data by title and artist."""
 
-    def __init__(self, xml_path: str | None = None) -> None:
+    def __init__(self, xml_path: str | Path | None = None) -> None:
         self.xml_path = Path(xml_path or REKORDBOX_COLLECTION_TRACKS_XML_FILE_PATH)
         self._tree: ET.ElementTree | None = None
         self._tracks_by_key: dict[tuple[str, str], ET.Element] = {}

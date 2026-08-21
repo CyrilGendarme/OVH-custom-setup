@@ -6,7 +6,7 @@ from ssh_websocket_middleware.custom_queue import EventQueue
 
 
 class QueuedUdpReceiver:
-    def __init__(self, queue: EventQueue, host="", port=55555, buffer_size=1024):
+    def __init__(self, queue: EventQueue, host, port, buffer_size=1024):
         self.queue = queue
         self.host = host
         self.port = port

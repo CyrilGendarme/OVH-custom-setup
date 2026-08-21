@@ -6,24 +6,20 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from config import CONFIG
 from ssh_websocket_middleware.custom_queue import EventQueue
-from ssh_websocket_middleware.websocket_server import (
-    TypewriterServer,
-    LastTracksServer,
-    config as websocket_config,
-)
+from ssh_websocket_middleware.websocket_server import TypewriterServer, LastTracksServer
 from obs_helpers.obs import OBSController
 from queued_udp_receiver import QueuedUdpReceiver
 
-port = 55555
-
-
-    
 async def main():
     queue = EventQueue()
-    udp_receiver = QueuedUdpReceiver(queue, port=port)
-    typewriter = TypewriterServer(queue, websocket_config)
-    tracklist = LastTracksServer(queue, websocket_config)
+    udp_config = CONFIG["udp"]
+    udp_receiver = QueuedUdpReceiver(
+        queue, host=udp_config["host"], port=udp_config["port"]
+    )
+    typewriter = TypewriterServer(queue, CONFIG)
+    tracklist = LastTracksServer(queue, CONFIG)
     udp_task = asyncio.create_task(udp_receiver.start())
 
     # Keep references so websocket servers stay alive for the process lifetime.

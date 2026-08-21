@@ -1,6 +1,20 @@
+import sys
+from pathlib import Path
+
 import obsws_python as obs
 
-client = obs.ReqClient(host="127.0.0.1", port=4455, password="aE5JQtDAWqDR2Jok")
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from config import CONFIG
+
+obs_config = CONFIG["obs"]
+client = obs.ReqClient(
+    host=obs_config["host"],
+    port=obs_config["port"],
+    password=obs_config.get("password", ""),
+)
 
 
 scene_names = [

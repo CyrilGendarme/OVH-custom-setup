@@ -3,7 +3,9 @@
         "host": "127.0.0.1",
         "port": 4455,
         "password": "aE5JQtDAWqDR2Jok",
-        "websocket_url": "ws://127.0.0.1:4455"
+        "websocket_url": "ws://127.0.0.1:4455",
+        "radio_video_sources": ["vid 1", "vid 2", "vid 3"],
+        "starting_soon_radio_source": "vid 3"
     },
 
     "overlay": {
@@ -21,6 +23,17 @@
     "random_events": {
         "item_name": "CTA popuri",
         "time_1": 80,
-        "time_2": 150
+        "time_2": 150,
+        "minimum_elapsed_track_seconds": 20,
+        "minimum_remaining_track_seconds": 15
+    },
+    "udp": {
+        "host": "",
+        "port": 55555
+    },
+    "paths": {
+        "musicbee_tags": "musicbee_radio/now_played_track_info/Tags.txt",
+        "track_duration_data": "musicbee_radio/now_played_track_info/track_duration_data.txt",
+        "rekordbox_xml": "C:/Users/User/Professional DJ team Dropbox/Cyril Gendarme/rekordbox/xml/rekordbox.xml"
     }
 }

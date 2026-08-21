@@ -8,15 +8,13 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
 	sys.path.insert(0, str(ROOT_DIR))
 
-from obs_helpers.obs import CONFIG, OBSController
+from config import CONFIG, resolve_path
+from obs_helpers.obs import OBSController
 
-TRACK_DURATION_DATA = (
-	Path(__file__).resolve().parent
-	/ "now_played_track_info"
-	/ "track_duration_data.txt"
-)
-MINIMUM_ELAPSED_TRACK_SECONDS = 20
-MINIMUM_REMAINING_TRACK_SECONDS = 15
+TRACK_DURATION_DATA = resolve_path(CONFIG["paths"]["track_duration_data"])
+RANDOM_EVENT_CONFIG = CONFIG["random_events"]
+MINIMUM_ELAPSED_TRACK_SECONDS = RANDOM_EVENT_CONFIG["minimum_elapsed_track_seconds"]
+MINIMUM_REMAINING_TRACK_SECONDS = RANDOM_EVENT_CONFIG["minimum_remaining_track_seconds"]
 
 
 def load_random_event_settings():

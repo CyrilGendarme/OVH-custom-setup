@@ -3,25 +3,17 @@ from datetime import datetime
 from pathlib import Path
 import sys
 
-from rekordbox_xml_dao import RekordboxDAO
-
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from rekordbox_xml_dao import RekordboxDAO
+from config import CONFIG, resolve_path
 from obs_helpers.obs import OBSController
-from ssh_websocket_middleware.websocket_server import BroadcastServer
+from ssh_websocket_middleware.websocket_server import NowPlayingServer, TypewriterServer
 
-MUSICBEE_TAGS = Path(__file__).resolve().parent / "now_played_track_info" / "Tags.txt"
-TRACK_DURATION_DATA = (
-    Path(__file__).resolve().parent
-    / "now_played_track_info"
-    / "track_duration_data.txt"
-)
-
-WS_HOST = "127.0.0.1"
-TYPEWRITER_PORT = 8770
-NOW_PLAYING_PORT = 8766
+MUSICBEE_TAGS = resolve_path(CONFIG["paths"]["musicbee_tags"])
+TRACK_DURATION_DATA = resolve_path(CONFIG["paths"]["track_duration_data"])
 
 
 def _safe_get(items, index):
@@ -59,8 +51,8 @@ async def main():
     except Exception as exc:
         print(f"OBS unavailable, macro trigger disabled: {exc}")
 
-    typewriter_ws = BroadcastServer(None, WS_HOST, TYPEWRITER_PORT, "Typewriter")
-    now_playing_ws = BroadcastServer(None, WS_HOST, NOW_PLAYING_PORT, "NowPlaying")
+    typewriter_ws = TypewriterServer(None, CONFIG)
+    now_playing_ws = NowPlayingServer(None, CONFIG)
 
     await typewriter_ws.start()
     await now_playing_ws.start()

@@ -4,6 +4,7 @@
     font-size: 80px;
     letter-spacing: 12px;
     text-align: center;
+    padding: 0 20px;
 }
 
 .word-radio-wrapper {
@@ -13,6 +14,19 @@
     top: 50%;
     transform: translateY(-50%);
     width: calc(100% - 256px);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+.word-dj-set-wrapper{
+    margin: 50px 0;
+    padding: 50px 0;
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(100% - 420px);
     overflow: hidden;
     display: flex;
     justify-content: center;

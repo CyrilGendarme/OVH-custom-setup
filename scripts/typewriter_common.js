@@ -3,7 +3,7 @@ import { normalizeIncomingTrackEvent } from "./helpers.js";
 
 export function initWordDisplay(selector) {
     let finalWord = "";
-    const frameDelay = 140;
+    const frameDelay = 110;
     const randomUnderscoreChance = 0.45;
     const clearAfterMs = 7500;
 

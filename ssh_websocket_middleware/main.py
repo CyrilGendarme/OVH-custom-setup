@@ -9,7 +9,7 @@ if str(ROOT_DIR) not in sys.path:
 from ssh_websocket_middleware.custom_queue import EventQueue
 from ssh_websocket_middleware.websocket_server import (
     TypewriterServer,
-    TracklistServer,
+    LastTracksServer,
     config as websocket_config,
 )
 from obs_helpers.obs import OBSController
@@ -23,7 +23,7 @@ async def main():
     queue = EventQueue()
     udp_receiver = QueuedUdpReceiver(queue, port=port)
     typewriter = TypewriterServer(queue, websocket_config)
-    tracklist = TracklistServer(queue, websocket_config)
+    tracklist = LastTracksServer(queue, websocket_config)
     udp_task = asyncio.create_task(udp_receiver.start())
 
     # Keep references so websocket servers stay alive for the process lifetime.
@@ -38,7 +38,7 @@ async def main():
             if obs.get_scene_name() == "MAIN_DJ_SET":
                 await typewriter.send(event)
                 # obs.activate_macro("Typerwriter")
-                obs.activate_macro("Typerwriter Radio")
+                obs.activate_macro("Typerwriter")
                 await asyncio.sleep(11)  # delay to ensure effect is fully achieved
 
             await tracklist.send(event)

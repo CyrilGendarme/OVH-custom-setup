@@ -19,16 +19,22 @@ MINIMUM_REMAINING_TRACK_SECONDS = RANDOM_EVENT_CONFIG["minimum_remaining_track_s
 
 def load_random_event_settings():
 	settings = CONFIG.get("random_events", {})
-	item_name = settings.get("item_name")
 	time_1 = settings.get("time_1")
 	time_2 = settings.get("time_2")
 
-	if not item_name:
-		raise ValueError("config.random_events.item_name must be configured")
+	# Support both single item_name and multiple item_names formats
+	item_name = settings.get("item_name")
+	item_names = settings.get("item_names")
 
-	if not isinstance(time_1, (int, float)) or not isinstance(
-		time_2, (int, float)
-	):
+	# Validate and select item_name
+	if item_names:
+		if not isinstance(item_names, list) or len(item_names) == 0:
+			raise ValueError("config.random_events.item_names must be a non-empty list")
+		item_name = random.choice(item_names)
+	elif not item_name:
+		raise ValueError("config.random_events must have either item_name or item_names configured")
+
+	if not isinstance(time_1, (int, float)) or not isinstance(time_2, (int, float)):
 		raise ValueError("config.random_events.time_1 and time_2 must be numbers")
 
 	if time_1 <= 0 or time_2 <= 0:

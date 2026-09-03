@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Countdown Overlay</title>
+        <link rel="preload" href="fonts/Staatliches-Regular.ttf" as="font" type="font/ttf" crossorigin />
         <link rel="stylesheet" href="styles/style.css" />
         <link rel="stylesheet" href="styles/style_countdown.css" />
     </head>
@@ -22,40 +23,53 @@
                 getTargetDate,
             } from "./scripts/startingSoonSchedule.js";
 
-            const countdownOverlayElement =
-                document.getElementById("countdown-overlay");
-            const remainingTimeElement =
-                document.getElementById("remaining-time");
-            const shouldShowCountdown =
-                TARGET_HOUR != null && TARGET_MINUTE != null;
-
-            function formatTime(value) {
-                return String(value).padStart(2, "0");
-            }
-
-            if (!shouldShowCountdown) {
-                countdownOverlayElement.style.display = "none";
-            } else {
-                let targetDate = getTargetDate();
-
-                function renderCountdown() {
-                    const now = new Date();
-                    let remainingSeconds = Math.floor((targetDate - now) / 1000);
-
-                    if (remainingSeconds <= 0) {
-                        targetDate = getTargetDate();
-                        remainingSeconds = Math.floor((targetDate - now) / 1000);
-                    }
-
-                    const hours = Math.floor(remainingSeconds / 3600);
-                    const minutes = Math.floor((remainingSeconds % 3600) / 60);
-                    const seconds = remainingSeconds % 60;
-
-                    remainingTimeElement.textContent = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+            async function initCountdown() {
+                // Wait for fonts to load
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
                 }
 
-                renderCountdown();
-                setInterval(renderCountdown, 1000);
+                const countdownOverlayElement =
+                    document.getElementById("countdown-overlay");
+                const remainingTimeElement =
+                    document.getElementById("remaining-time");
+                const shouldShowCountdown =
+                    TARGET_HOUR != null && TARGET_MINUTE != null;
+
+                function formatTime(value) {
+                    return String(value).padStart(2, "0");
+                }
+
+                if (!shouldShowCountdown) {
+                    countdownOverlayElement.style.display = "none";
+                } else {
+                    let targetDate = getTargetDate();
+
+                    function renderCountdown() {
+                        const now = new Date();
+                        let remainingSeconds = Math.floor((targetDate - now) / 1000);
+
+                        if (remainingSeconds <= 0) {
+                            targetDate = getTargetDate();
+                            remainingSeconds = Math.floor((targetDate - now) / 1000);
+                        }
+
+                        const hours = Math.floor(remainingSeconds / 3600);
+                        const minutes = Math.floor((remainingSeconds % 3600) / 60);
+                        const seconds = remainingSeconds % 60;
+
+                        remainingTimeElement.textContent = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+                    }
+
+                    renderCountdown();
+                    setInterval(renderCountdown, 1000);
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCountdown);
+            } else {
+                initCountdown();
             }
         </script>
     </body>

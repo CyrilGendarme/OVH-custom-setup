@@ -2,6 +2,8 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <link rel="preload" href="fonts/Staatliches-Regular.ttf" as="font" type="font/ttf" crossorigin />
+        <link rel="preload" href="fonts/DMSans.ttf" as="font" type="font/ttf" crossorigin />
         <link rel="stylesheet" href="styles/style.css" />
         <link rel="stylesheet" href="styles/style_typewriter.css" />
     </head>
@@ -13,7 +15,18 @@
 
     <script type="module">
         import { initWordDisplay } from "./scripts/typewriter_common.js";
-        initWordDisplay(".word");
+        
+        // Wait for fonts to load before initializing text display
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+                initWordDisplay(".word");
+            });
+        } else {
+            // Fallback for older browsers
+            window.addEventListener("load", () => {
+                initWordDisplay(".word");
+            });
+        }
     </script>
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <link rel="preload" href="fonts/DMSans.ttf" as="font" type="font/ttf" crossorigin />
         <link rel="stylesheet" href="styles/style.css" />
         <link rel="stylesheet" href="styles/style_now_playing.css" />
     </head>
@@ -250,17 +251,30 @@
                     });
             }
 
-            const socket = new WebSocketService({
-                port: 8765,
+            async function initNowPlaying() {
+                // Wait for fonts to load
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
 
-                onMessage(event) {
-                    const payload = parseIncomingPayload(event.data);
-                    refreshAlbumCover();
-                    updateNowPlayingInfo(payload);
-                },
-            });
+                const socket = new WebSocketService({
+                    port: 8765,
 
-            socket.connect();
+                    onMessage(event) {
+                        const payload = parseIncomingPayload(event.data);
+                        refreshAlbumCover();
+                        updateNowPlayingInfo(payload);
+                    },
+                });
+
+                socket.connect();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initNowPlaying);
+            } else {
+                initNowPlaying();
+            }
         </script>
     </body>
 </html>

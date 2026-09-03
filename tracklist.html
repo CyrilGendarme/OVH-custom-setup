@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <link rel="preload" href="fonts/DMSans.ttf" as="font" type="font/ttf" crossorigin />
         <link rel="stylesheet" href="styles/style.css" />
         <link rel="stylesheet" href="styles/style_tracklist.css" />
     </head>
@@ -18,20 +19,33 @@
             import { WebSocketService } from "./scripts/websocketClientService.js";
             import { createTracklist } from "./scripts/tracklist.js";
 
-            const tracklist = createTracklist({
-                container: "tracklist-content",
-                maxItems: 8,
-            });
+            // Wait for fonts to load before initializing
+            async function initTracklist() {
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
 
-            const socket = new WebSocketService({
-                port: 8766,
+                const tracklist = createTracklist({
+                    container: "tracklist-content",
+                    maxItems: 8,
+                });
 
-                onMessage(event) {
-                    tracklist.handleMessage(event.data);
-                },
-            });
+                const socket = new WebSocketService({
+                    port: 8766,
 
-            socket.connect();
+                    onMessage(event) {
+                        tracklist.handleMessage(event.data);
+                    },
+                });
+
+                socket.connect();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTracklist);
+            } else {
+                initTracklist();
+            }
         </script>
     </body>
 </html>

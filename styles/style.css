@@ -1,11 +1,13 @@
 @font-face {
     font-family: "Staatliches";
-    src: url("fonts/Staatliches-Regular.ttf") format("truetype");
+    src: url("../fonts/Staatliches-Regular.ttf") format("truetype");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "DMSans";
-    src: url("fonts/DMSans.ttf") format("truetype");
+    src: url("../fonts/DMSans.ttf") format("truetype");
+    font-display: swap;
 }
 
 html,

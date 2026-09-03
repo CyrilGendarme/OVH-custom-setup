@@ -1,5 +1,5 @@
-export const TARGET_HOUR = 19;
-export const TARGET_MINUTE = 30;
+export const TARGET_HOUR = 21;
+export const TARGET_MINUTE = 0;
 export const STARTING_SOON_WINDOW_SECONDS = 5 * 60;
 
 export function hasStartingSoonTarget() {

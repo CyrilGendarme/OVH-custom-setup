@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $Python = "python"    # Or: "C:\path\to\venv\Scripts\python.exe"
 
 $ListenerScriptPath = "C:\Users\User\Desktop\musique\online\dj gratuit\ovh\musicbee_radio\listener.py"
-$RandomEventsScriptPath = "C:\Users\User\Desktop\musique\online\dj gratuit\ovh\musicbee_radio\random_events.py"
+$RandomEventsScriptPath = "C:\Users\User\Desktop\musique\online\dj gratuit\ovh\obs_helpers\random_events.py"
 
 function Resolve-ScriptPath {
     param(

@@ -4,7 +4,7 @@ from typing import Any
 
 
 ROOT_DIR = Path(__file__).resolve().parent
-CONFIG_FILE = ROOT_DIR / "config.json"
+CONFIG_FILE = Path(r"c:\Users\User\Desktop\musique\online\dj gratuit\ovh\config.json")
 
 
 def _load_config() -> dict[str, Any]:

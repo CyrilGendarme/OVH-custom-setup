@@ -2,6 +2,15 @@
 
 $ErrorActionPreference = "Stop"
 
+# Launch OBS Studio first
+$OBSExePath = "C:\Program Files\obs-studio\bin\64bit\obs64.exe"
+if (Test-Path -LiteralPath $OBSExePath) {
+    Start-Process -FilePath $OBSExePath
+    Write-Host "Launched OBS Studio"
+} else {
+    Write-Host "Warning: OBS Studio not found at $OBSExePath"
+}
+
 # Paths
 $Python = "python"    # Or: "C:\path\to\venv\Scripts\python.exe"
 

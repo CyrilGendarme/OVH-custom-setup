@@ -117,7 +117,7 @@ async def main():
 
                     if obs is not None and obs.get_scene_name() == "MAIN_RADIO":
                         await typewriter_ws.send(event)
-                        obs.switch_radio_background()
+                        # obs.switch_radio_background()
                         obs.activate_macro("Typerwriter Radio")
                         await asyncio.sleep(
                             11
@@ -125,8 +125,8 @@ async def main():
 
                     await now_playing_ws.send(event)
 
-            if obs is not None and obs.get_scene_name() == "MAIN_RADIO":
-                obs.sync_radio_background()
+            # if obs is not None and obs.get_scene_name() == "MAIN_RADIO":
+            #     obs.sync_radio_background()
 
         except Exception as exc:
             print(exc)

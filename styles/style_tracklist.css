@@ -12,7 +12,8 @@
     position: fixed;
     right: 0;
     bottom: 0;
-    width: 420px;
+    width: 424px;
+    width: 424px;
     height: 1080px;
     overflow: hidden;
 }
@@ -46,6 +47,19 @@
     height: 42px;
 }
 
+#tracklist-container-wrapper > #tracklist-container {
+    margin: 18px 20px;
+}
+
 #tracklist-container-wrapper .tracklist-item {
-    height: 80px;
+    margin: 2px;
+    min-height: 80px;
+    height: auto;
+}
+
+#tracklist-container-wrapper #tracklist-content {
+    padding: 20px 0 0px 0;
+    display: flex;
+    flex-direction: column;
+    height: 730px;
 }

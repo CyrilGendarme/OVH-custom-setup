@@ -1,15 +1,39 @@
-# run-all.ps1
+﻿# run-all.ps1
 
 $ErrorActionPreference = "Stop"
 
 # Launch OBS Studio first
 $OBSExePath = "C:\Program Files\obs-studio\bin\64bit\obs64.exe"
 if (Test-Path -LiteralPath $OBSExePath) {
-    Start-Process -FilePath $OBSExePath
+    Start-Process -FilePath $OBSExePath -WorkingDirectory (Split-Path -Parent $OBSExePath)
     Write-Host "Launched OBS Studio"
 } else {
-    Write-Host "Warning: OBS Studio not found at $OBSExePath"
+    throw "OBS Studio not found at $OBSExePath"
 }
+
+# Wait until OBS is fully started (WebSocket server accepting connections) before anything else
+$OBSWebSocketPort = 4455
+$OBSTimeoutSeconds = 120
+Write-Host "Waiting for OBS to be fully launched..."
+$deadline = (Get-Date).AddSeconds($OBSTimeoutSeconds)
+$obsReady = $false
+while ((Get-Date) -lt $deadline) {
+    $client = New-Object System.Net.Sockets.TcpClient
+    try {
+        $client.Connect("127.0.0.1", $OBSWebSocketPort)
+        $obsReady = $true
+    } catch {
+        Start-Sleep -Seconds 1
+    } finally {
+        $client.Close()
+    }
+    if ($obsReady) { break }
+}
+if (-not $obsReady) {
+    throw "OBS did not become ready within $OBSTimeoutSeconds seconds (WebSocket port $OBSWebSocketPort)"
+}
+Start-Sleep -Seconds 2
+Write-Host "OBS is ready"
 
 # Launch MusicBee
 $MusicBeeExePath = "C:\Program Files (x86)\MusicBee\MusicBee.exe"

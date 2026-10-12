@@ -11,6 +11,7 @@ export function createTracklist({ container, maxItems = 8 }) {
     }
 
     const trackItems = [];
+    const seenTracks = new Set();
     const baseSpeed = 80;
     const randomness = 0.2;
     let animationQueue = Promise.resolve();
@@ -46,6 +47,12 @@ export function createTracklist({ container, maxItems = 8 }) {
         if (!text) {
             return;
         }
+        
+        if (seenTracks.has(text)) {
+            return;
+        }
+        
+        seenTracks.add(text);
         animationQueue = animationQueue.then(() => addTrack(text));
     }
 

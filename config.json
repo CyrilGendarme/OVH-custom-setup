@@ -2,7 +2,7 @@
     "obs": {
         "host": "127.0.0.1",
         "port": 4455,
-        "password": "aE5JQtDAWqDR2Jok",
+        "password": "xheaYSnP1oCSIHcB",
         "websocket_url": "ws://127.0.0.1:4455",
         "starting_soon_radio_source": "vid 3"
     },

@@ -4,14 +4,20 @@ from typing import Any
 
 
 ROOT_DIR = Path(__file__).resolve().parent
-CONFIG_FILE = Path(r"c:\Users\User\Desktop\musique\online\dj gratuit\ovh\config.json")
+CONFIG_FILES = (
+    Path(r"c:\Users\User\Desktop\musique\online\dj gratuit\ovh\config.json"),
+    ROOT_DIR / "config.json",
+)
 
 
 def _load_config() -> dict[str, Any]:
-    if not CONFIG_FILE.exists():
-        return {}
+    config_path = next((path for path in CONFIG_FILES if path.exists()), None)
+    if config_path is None:
+        raise FileNotFoundError(
+            f"No config.json found, tried: {', '.join(map(str, CONFIG_FILES))}"
+        )
 
-    with CONFIG_FILE.open(encoding="utf-8") as config_file:
+    with config_path.open(encoding="utf-8") as config_file:
         return json.load(config_file)
 
 

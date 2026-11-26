@@ -26,9 +26,8 @@
         "minimum_elapsed_track_seconds": 20,
         "minimum_remaining_track_seconds": 15
     },
-    "udp": {
-        "host": "",
-        "port": 55555
+    "events": {
+        "beacon_port": 55557
     },
     "paths": {
         "musicbee_tags": "musicbee_radio/now_played_track_info/Tags.txt",

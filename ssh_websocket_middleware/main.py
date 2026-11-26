@@ -10,17 +10,17 @@ from config import CONFIG
 from ssh_websocket_middleware.custom_queue import EventQueue
 from ssh_websocket_middleware.websocket_server import TypewriterServer, LastTracksServer
 from obs_helpers.obs import OBSController
-from queued_udp_receiver import QueuedUdpReceiver
+from ssh_websocket_middleware.network_event_receiver import NetworkEventReceiver
 
 async def main():
     queue = EventQueue()
-    udp_config = CONFIG["udp"]
-    udp_receiver = QueuedUdpReceiver(
-        queue, host=udp_config["host"], port=udp_config["port"]
+    events_config = CONFIG.get("events", {})
+    event_receiver = NetworkEventReceiver(
+        queue, beacon_port=events_config.get("beacon_port", 55557)
     )
     typewriter = TypewriterServer(queue, CONFIG)
     tracklist = LastTracksServer(queue, CONFIG)
-    udp_task = asyncio.create_task(udp_receiver.start())
+    event_task = asyncio.create_task(event_receiver.start())
 
     # Keep references so websocket servers stay alive for the process lifetime.
     _typewriter_server = await typewriter.start()
@@ -39,8 +39,8 @@ async def main():
 
             await tracklist.send(event)
     finally:
-        udp_receiver.stop()
-        udp_task.cancel()
+        event_receiver.stop()
+        event_task.cancel()
 
 
 asyncio.run(main())
